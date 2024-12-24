@@ -6,40 +6,42 @@
 //     console.log(err);
 //   });
 
-async function getPlayerPUUID(gameName, tagLine){
-
-  const response = await fetch(`https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${gameName}/${tagLine}?api_key=RGAPI-12ba0f3e-5eb0-46c5-9528-64deadd653f7`)
-  const jsonResponse = await response.json()
+async function getPlayerPUUID(gameName, tagLine) {
+  const response = await fetch(
+    `https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${gameName}/${tagLine}?api_key=RGAPI-12ba0f3e-5eb0-46c5-9528-64deadd653f7`
+  );
+  const jsonResponse = await response.json();
   // console.log(jsonResponse)
-  return jsonResponse["puuid"]
-};
-
-
-
+  return jsonResponse["puuid"];
+}
 
 // puuid = (async () => console.log(await getPlayerPUUID("drew diff","2112")))()
 
-async function getMatchIDs(puuid){
-
-  const response  = await fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=10&api_key=RGAPI-12ba0f3e-5eb0-46c5-9528-64deadd653f7`)
-  const jsonResponse = await response.json()
-  return jsonResponse
-
+async function getMatchIDs(puuid) {
+  const response = await fetch(
+    `https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=10&api_key=RGAPI-12ba0f3e-5eb0-46c5-9528-64deadd653f7`
+  );
+  const jsonResponse = await response.json();
+  return jsonResponse;
 }
 
-async function getRank(summonerID){
-  const response  = await fetch(`https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerID}?api_key=RGAPI-12ba0f3e-5eb0-46c5-9528-64deadd653f7`)
-  const jsonResponse = await response.json()
-  const tier = jsonResponse["tier"]
-  const rank = jsonResponse["rank"]
+async function getRank(summonerID) {
+  const response = await fetch(
+    `https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerID}?api_key=RGAPI-12ba0f3e-5eb0-46c5-9528-64deadd653f7`
+  );
+  const jsonResponse = await response.json();
+  const tier = jsonResponse["tier"];
+  const rank = jsonResponse["rank"];
 
-  return tier + " " + rank
+  return tier + " " + rank;
 }
 
-async function getAverageRating(matchID){
-  const response  = await fetch(`https://americas.api.riotgames.com/lol/match/v5/matches/${matchID}?api_key=RGAPI-12ba0f3e-5eb0-46c5-9528-64deadd653f7`)
-  const jsonResponse = await response.json()
-  const participants = jsonResponse["info"]["participants"]
+async function getAverageRating(matchID) {
+  const response = await fetch(
+    `https://americas.api.riotgames.com/lol/match/v5/matches/${matchID}?api_key=RGAPI-12ba0f3e-5eb0-46c5-9528-64deadd653f7`
+  );
+  const jsonResponse = await response.json();
+  const participants = jsonResponse["info"]["participants"];
 
   const ranks = {
     "Iron IV": 1,
@@ -72,38 +74,36 @@ async function getAverageRating(matchID){
     "Diamond I": 28,
     "Master I": 29,
     "Grandmaster I": 30,
-    "Challenger I": 31
-  }
+    "Challenger I": 31,
+  };
 
-  let count = 0
-  let total = 0
+  let count = 0;
+  let total = 0;
 
-  for (let i = 0; i < participants.length; i++){
+  for (let i = 0; i < participants.length; i++) {
+    let curr = await getRank(participants[i]["summonerId"]);
 
-    let curr = getRank(participants[i]["summonerId"])
-    
-    if (curr != 0){
-      count++ 
+    if (curr != 0) {
+      count++;
     }
 
-    total += total[curr]
+    total += ranks[curr];
   }
-  
-  return total / count
+
+  return total / count;
 }
 
-async function main(){
-
-  const puuid = await getPlayerPUUID("drew diff", "2112")
-  const matchIDs = await getMatchIDs(puuid)
+async function main() {
+  const puuid = await getPlayerPUUID("drew diff", "2112");
+  const matchIDs = await getMatchIDs(puuid);
   // console.log(matchIDs)
 
-  total  = 0 
-  for (let i = 0; i < matchIDs.length; i++){
-    total += getAverageRating(matchIDs[i])
+  let total = 0;
+  for (let i = 0; i < matchIDs.length; i++) {
+    total += await getAverageRating(matchIDs[i]);
   }
 
-  rating = total / matchIDs.length
+  rating = total / matchIDs.length;
 
   ranks = {
     1: "Iron IV",
@@ -136,11 +136,10 @@ async function main(){
     28: "Diamond I",
     29: "Master",
     30: "Grandmaster",
-    31: "Challenger"
-  }
+    31: "Challenger",
+  };
 
-  console.log(ranks[Math.floor(rating)])
+  console.log(ranks[Math.floor(rating)]);
+}
 
-};
-
-main()
+main();
