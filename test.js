@@ -92,12 +92,6 @@ async function getAverageRating(matchID){
   return total / count
 }
 
-
-
-
-
-
-
 async function main(){
 
   const puuid = await getPlayerPUUID("drew diff", "2112")
