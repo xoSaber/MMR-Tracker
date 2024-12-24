@@ -7,19 +7,23 @@
 //   });
 
 async function getPlayerPUUID(gameName, tagLine) {
-  const response = await fetch(
-    `https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${gameName}/${tagLine}?api_key=RGAPI-12ba0f3e-5eb0-46c5-9528-64deadd653f7`
-  );
-  const jsonResponse = await response.json();
-  // console.log(jsonResponse)
-  return jsonResponse["puuid"];
+  try {
+    const response = await fetch(
+      `https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${gameName}/${tagLine}?api_key=RGAPI-12ba0f3e-5eb0-46c5-9528-64deadd653f7`
+    );
+    const jsonResponse = await response.json();
+    // console.log(jsonResponse)
+    return jsonResponse["puuid"];
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 // puuid = (async () => console.log(await getPlayerPUUID("drew diff","2112")))()
 
 async function getMatchIDs(puuid) {
   const response = await fetch(
-    `https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=10&api_key=RGAPI-12ba0f3e-5eb0-46c5-9528-64deadd653f7`
+    `https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=1&api_key=RGAPI-12ba0f3e-5eb0-46c5-9528-64deadd653f7`
   );
   const jsonResponse = await response.json();
   return jsonResponse;
@@ -30,10 +34,18 @@ async function getRank(summonerID) {
     `https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerID}?api_key=RGAPI-12ba0f3e-5eb0-46c5-9528-64deadd653f7`
   );
   const jsonResponse = await response.json();
-  const tier = jsonResponse["tier"];
-  const rank = jsonResponse["rank"];
+  if (jsonResponse.length) {
+    const tier = jsonResponse[0]["tier"];
+    const rank = jsonResponse[0]["rank"];
 
-  return tier + " " + rank;
+    if (!tier || !rank) {
+      return "";
+    }
+
+    return tier + " " + rank;
+  }
+
+  return "";
 }
 
 async function getAverageRating(matchID) {
@@ -44,50 +56,49 @@ async function getAverageRating(matchID) {
   const participants = jsonResponse["info"]["participants"];
 
   const ranks = {
-    "Iron IV": 1,
-    "Iron III": 2,
-    "Iron II": 3,
-    "Iron I": 4,
-    "Bronze IV": 5,
-    "Bronze III": 6,
-    "Bronze II": 7,
-    "Bronze I": 8,
-    "Silver IV": 9,
-    "Silver III": 10,
-    "Silver II": 11,
-    "Silver I": 12,
-    "Gold IV": 13,
-    "Gold III": 14,
-    "Gold II": 15,
-    "Gold I": 16,
-    "Platinum IV": 17,
-    "Platinum III": 18,
-    "Platinum II": 19,
-    "Platinum I": 20,
-    "Emerald IV": 21,
-    "Emerald III": 22,
-    "Emerald II": 23,
-    "Emerald I": 24,
-    "Diamond IV": 25,
-    "Diamond III": 26,
-    "Diamond II": 27,
-    "Diamond I": 28,
-    "Master I": 29,
-    "Grandmaster I": 30,
-    "Challenger I": 31,
+    "IRON IV": 1,
+    "IRON III": 2,
+    "IRON II": 3,
+    "IRON I": 4,
+    "BRONZE IV": 5,
+    "BRONZE III": 6,
+    "BRONZE II": 7,
+    "BRONZE I": 8,
+    "SILVER IV": 9,
+    "SILVER III": 10,
+    "SILVER II": 11,
+    "SILVER I": 12,
+    "GOLD IV": 13,
+    "GOLD III": 14,
+    "GOLD II": 15,
+    "GOLD I": 16,
+    "PLATINUM IV": 17,
+    "PLATINUM III": 18,
+    "PLATINUM II": 19,
+    "PLATINUM I": 20,
+    "EMERALD IV": 21,
+    "EMERALD III": 22,
+    "EMERALD II": 23,
+    "EMERALD I": 24,
+    "DIAMOND IV": 25,
+    "DIAMOND III": 26,
+    "DIAMOND II": 27,
+    "DIAMOND I": 28,
+    "MASTER I": 29,
+    "GRANDMASTER I": 30,
+    "CHALLENGER I": 31,
   };
 
   let count = 0;
   let total = 0;
 
   for (let i = 0; i < participants.length; i++) {
-    let curr = await getRank(participants[i]["summonerId"]);
+    let rank = await getRank(participants[i]["summonerId"]);
 
-    if (curr != 0) {
+    if (rank) {
       count++;
+      total += ranks[rank];
     }
-
-    total += ranks[curr];
   }
 
   return total / count;
@@ -105,41 +116,7 @@ async function main() {
 
   rating = total / matchIDs.length;
 
-  ranks = {
-    1: "Iron IV",
-    2: "Iron III",
-    3: "Iron II",
-    4: "Iron I",
-    5: "Bronze IV",
-    6: "Bronze III",
-    7: "Bronze II",
-    8: "Bronze I",
-    9: "Silver IV",
-    10: "Silver III",
-    11: "Silver II",
-    12: "Silver I",
-    13: "Gold IV",
-    14: "Gold III",
-    15: "Gold II",
-    16: "Gold I",
-    17: "Platinum IV",
-    18: "Platinum III",
-    19: "Platinum II",
-    20: "Platinum I",
-    21: "Emerald IV",
-    22: "Emerald III",
-    23: "Emerald II",
-    24: "Emerald I",
-    25: "Diamond IV",
-    26: "Diamond III",
-    27: "Diamond II",
-    28: "Diamond I",
-    29: "Master",
-    30: "Grandmaster",
-    31: "Challenger",
-  };
-
-  console.log(ranks[Math.floor(rating)]);
+  console.log(rating);
 }
 
 main();
