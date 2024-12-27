@@ -68,6 +68,23 @@ const VALUE_TO_RANK = {
   31: "CHALLENGER",
 };
 
+const userForm = document.getElementById("form")
+const rankElem = document.getElementById("rank")
+userForm.addEventListener('submit', async (event) => {
+  event.preventDefault()
+
+  const formInfo = new FormData(userForm)
+  const user = formInfo.get('user')
+  const tag = formInfo.get('tag')
+  const rank = await main(user, tag)
+  rankElem.textContent = rank
+});
+
+
+
+
+
+
 async function getPlayerPUUID(gameName, tagLine) {
   try {
     const response = await fetch(
@@ -143,8 +160,9 @@ async function getAverageRating(matchID) {
   return 0;
 }
 
-async function main() {
-  const puuid = await getPlayerPUUID("Spawn", "NA3");
+async function main(user,tag) {
+
+  const puuid = await getPlayerPUUID(user, tag);
   const matchIDs = await getMatchIDs(puuid);
 
   let total = 0;
@@ -154,7 +172,7 @@ async function main() {
 
   rating = total / matchIDs.length;
 
-  console.log(VALUE_TO_RANK[Math.floor(rating)]);
+  return VALUE_TO_RANK[Math.floor(rating)]
 }
 
 main();
