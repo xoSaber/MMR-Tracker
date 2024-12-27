@@ -1,15 +1,9 @@
-// fetch("https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/Watching%20Me/hawk?api_key=RGAPI-12ba0f3e-5eb0-46c5-9528-64deadd653f7")
-//   .then(async (res) => {
-//     console.log(await res.json());
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   });
+const API_KEY = "RGAPI-5dd2854b-e18c-45fa-8ff0-ba6580a2bb29";
 
 async function getPlayerPUUID(gameName, tagLine) {
   try {
     const response = await fetch(
-      `https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${gameName}/${tagLine}?api_key=RGAPI-12ba0f3e-5eb0-46c5-9528-64deadd653f7`
+      `https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${gameName}/${tagLine}?api_key=${API_KEY}`
     );
     const jsonResponse = await response.json();
     // console.log(jsonResponse)
@@ -23,7 +17,7 @@ async function getPlayerPUUID(gameName, tagLine) {
 
 async function getMatchIDs(puuid) {
   const response = await fetch(
-    `https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=1&api_key=RGAPI-12ba0f3e-5eb0-46c5-9528-64deadd653f7`
+    `https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=1&api_key=${API_KEY}`
   );
   const jsonResponse = await response.json();
   return jsonResponse;
@@ -31,7 +25,7 @@ async function getMatchIDs(puuid) {
 
 async function getRank(summonerID) {
   const response = await fetch(
-    `https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerID}?api_key=RGAPI-12ba0f3e-5eb0-46c5-9528-64deadd653f7`
+    `https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerID}?api_key=${API_KEY}`
   );
   const jsonResponse = await response.json();
   if (jsonResponse.length) {
@@ -50,7 +44,7 @@ async function getRank(summonerID) {
 
 async function getAverageRating(matchID) {
   const response = await fetch(
-    `https://americas.api.riotgames.com/lol/match/v5/matches/${matchID}?api_key=RGAPI-12ba0f3e-5eb0-46c5-9528-64deadd653f7`
+    `https://americas.api.riotgames.com/lol/match/v5/matches/${matchID}?api_key=${API_KEY}`
   );
   const jsonResponse = await response.json();
   const participants = jsonResponse["info"]["participants"];
