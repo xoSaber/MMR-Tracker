@@ -17,7 +17,7 @@ async function getPlayerPUUID(gameName, tagLine) {
 
 async function getMatchIDs(puuid) {
   const response = await fetch(
-    `https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=1&api_key=${API_KEY}`
+    `https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=2&api_key=${API_KEY}`
   );
   const jsonResponse = await response.json();
   return jsonResponse;
@@ -93,13 +93,14 @@ async function getAverageRating(matchID) {
       count++;
       total += ranks[rank];
     }
+
   }
 
   return total / count;
 }
 
 async function main() {
-  const puuid = await getPlayerPUUID("drew diff", "2112");
+  const puuid = await getPlayerPUUID(" Watching Me", "hawk");
   const matchIDs = await getMatchIDs(puuid);
   // console.log(matchIDs)
 
@@ -110,7 +111,42 @@ async function main() {
 
   rating = total / matchIDs.length;
 
-  console.log(rating);
+  const ranks = {
+    1: "IRON IV",
+    2: "IRON III",
+    3: "IRON II",
+    4: "IRON I",
+    5: "BRONZE IV",
+    6: "BRONZE III",
+    7: "BRONZE II",
+    8: "BRONZE I",
+    9: "SILVER IV",
+    10: "SILVER III",
+    11: "SILVER II",
+    12: "SILVER I",
+    13: "GOLD IV",
+    14: "GOLD III",
+    15: "GOLD II",
+    16: "GOLD I",
+    17: "PLATINUM IV",
+    18: "PLATINUM III",
+    19: "PLATINUM II",
+    20: "PLATINUM I",
+    21: "EMERALD IV",
+    22: "EMERALD III",
+    23: "EMERALD II",
+    24: "EMERALD I",
+    25: "DIAMOND IV",
+    26: "DIAMOND III",
+    27: "DIAMOND II",
+    28: "DIAMOND I",
+    29: "MASTER",
+    30: "GRANDMASTER",
+    31: "CHALLENGER",
+};
+
+
+  console.log(ranks[Math.floor(rating)]);
 }
 
 main();
