@@ -14,6 +14,6 @@ userForm.addEventListener("submit", async (event) => {
   });
   console.log(rank);
   const jsonResponse = await rank.json();
-  //   rankElem.textContent = rank
+  rankElem.textContent =jsonResponse['tshirt']
   console.log(jsonResponse);
 });
