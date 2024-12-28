@@ -1,4 +1,4 @@
-const API_KEY = "RGAPI-5dd2854b-e18c-45fa-8ff0-ba6580a2bb29";
+const API_KEY = "RGAPI-94c41157-381f-40ce-8e70-f2a65efcf55b";
 
 const RANK_TO_VALUE = {
   "IRON IV": 1,
@@ -67,8 +67,6 @@ const VALUE_TO_RANK = {
   30: "GRANDMASTER",
   31: "CHALLENGER",
 };
-
-
 
 async function getPlayerPUUID(gameName, tagLine) {
   try {
@@ -145,8 +143,7 @@ async function getAverageRating(matchID) {
   return 0;
 }
 
-async function main(user,tag) {
-
+async function main(user, tag) {
   const puuid = await getPlayerPUUID(user, tag);
   const matchIDs = await getMatchIDs(puuid);
 
@@ -157,7 +154,7 @@ async function main(user,tag) {
 
   rating = total / matchIDs.length;
 
-  return VALUE_TO_RANK[Math.floor(rating)]
+  return VALUE_TO_RANK[Math.floor(rating)];
 }
 
-module.exports = { main }
+module.exports = { main };
