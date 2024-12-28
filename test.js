@@ -68,21 +68,6 @@ const VALUE_TO_RANK = {
   31: "CHALLENGER",
 };
 
-const userForm = document.getElementById("form")
-const rankElem = document.getElementById("rank")
-userForm.addEventListener('submit', async (event) => {
-  event.preventDefault()
-
-  const formInfo = new FormData(userForm)
-  const user = formInfo.get('user')
-  const tag = formInfo.get('tag')
-  const rank = await main(user, tag)
-  rankElem.textContent = rank
-});
-
-
-
-
 
 
 async function getPlayerPUUID(gameName, tagLine) {
@@ -100,7 +85,7 @@ async function getPlayerPUUID(gameName, tagLine) {
 async function getMatchIDs(puuid) {
   try {
     const response = await fetch(
-      `https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=10&api_key=${API_KEY}`
+      `https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=1&api_key=${API_KEY}`
     );
     const jsonResponse = await response.json();
     return jsonResponse;
@@ -175,4 +160,4 @@ async function main(user,tag) {
   return VALUE_TO_RANK[Math.floor(rating)]
 }
 
-main();
+module.exports = { main }
